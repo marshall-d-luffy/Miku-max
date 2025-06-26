@@ -34,7 +34,7 @@ module.exports = {
 		}
 	},
 
-	onStart: async function ({ message, event, args, getLang }) {
+	onStart: async function ({ message, event, api, args, getLang }) {
 		if (event.messageReply)
 			return message.reply(event.messageReply.senderID);
 		if (!args[0])
@@ -43,7 +43,7 @@ module.exports = {
 			let msg = '';
 			for (const link of args) {
 				try {
-					const uid = await findUid(link);
+					const uid = await api.getUID(link);
 					msg += `${link} => ${uid}\n`;
 				}
 				catch (e) {
