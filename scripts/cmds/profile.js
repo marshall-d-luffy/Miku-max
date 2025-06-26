@@ -4,7 +4,7 @@ module.exports = {
 aliases: ["pfp"],
 
 		version: "1.1",
-		author: "NIB",
+		author: "NIB & Tawsif~",
 		countDown: 5,
 		role: 0,
 		shortDescription: "PROFILE image",
@@ -24,20 +24,20 @@ aliases: ["pfp"],
 		}
 	},
 
-	onStart: async function ({ event, message, usersData, args, getLang }) {
+	onStart: async function ({ event, message, usersData, api, args, getLang }) {
     let avt;
 		const uid1 = event.senderID;
 		const uid2 = Object.keys(event.mentions)[0];
 		if(event.type == "message_reply"){
       avt = await usersData.getAvatarUrl(event.messageReply.senderID)
-    } else{
+    } else if (args[0]) {
+avt = await usersData.getAvatarUrl((await api.getUID(args[0])));
+} else {
       if (!uid2){avt =  await usersData.getAvatarUrl(uid1)
               } else{avt = await usersData.getAvatarUrl(uid2)}}
 
 
-		message.reply({
-			body:"",
-			attachment: await global.utils.getStreamFromURL(avt)
+		message.reply({	attachment: await global.utils.getStreamFromURL(avt)
 	})
   }
 };

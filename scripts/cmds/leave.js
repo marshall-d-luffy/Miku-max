@@ -1,12 +1,10 @@
-const axios = require("axios");
-const fs = require("fs-extra");
-const request = require("request");
+
 module.exports = {
 	config: {
 		name: "leave",
-		aliases: ["l"],
+		aliases: [],
 		version: "1.0",
-		author: "Sandy",
+		author: "Sandy & fixed by Tawsif~",
 		countDown: 5,
 		role: 2,
 		shortDescription: "bot will leave gc",
@@ -23,7 +21,7 @@ module.exports = {
  if (!args.join(" ")) {
  id = event.threadID;
  } else {
- id = parseInt(args.join(" "));
+ id = args[0];
  }
  return api.sendMessage('goodbye guys', id, () => api.removeUserFromGroup(api.getCurrentUserID(), id))
 		}

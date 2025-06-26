@@ -9,7 +9,7 @@ module.exports = {
   config: {
     name: "help",
     version: "1.17",
-    author: "NTKhang & MD Tawsif",
+    author: "NTKhanki & MD Tawsif",
     countDown: 5,
     role: 0,
     shortDescription: {
@@ -44,24 +44,23 @@ module.exports = {
 
       Object.keys(categories).forEach((category) => {
         if (category !== "info") {
-          msg += `\n╭───♡ ${category.toUpperCase()}  `;
+          msg += `\n╭──『 ${category.toUpperCase()} 』`;
 
           const names = categories[category].commands.sort();
           for (let i = 0; i < names.length; i += 3) {
-            const cmds = names.slice(i, i + 2).map((item) => `✧${item}`);
+            const cmds = names.slice(i, i + 3).map((item) => `✧${item}`);
             msg += `\n│${cmds.join(" ".repeat(Math.max(1, 5 - cmds.join("").length)))}`;
           }
 
-          msg += `\n╰───────────♡`;
+          msg += `\n╰────────────◊`;
         }
       });
 
       const totalCommands = commands.size;
-      msg += `\n╭───♡ Bot & Owner info\n⇨ Total Cmds: [ ${totalCommands} ]\n`;
-      msg += `⇨ Type [ ${prefix} help <cmd name> ]\n│to learn the usage\n│Bot owner: MD Tawsif\n│profile: facebook.com/tawsif.uwu`;
-      msg += `
-│Miku lite♡
-╰───────────♡`; // its not decoy so change it if you want 
+      msg += `\n╭──『 Bot & Owner info 』\n⇨ Total Cmds: [ ${totalCommands} ]\n`;
+      msg += `⇨ Type [ ${prefix} help <cmd name> ]\n│to learn the usage\n│Bot owner: MD Tawsif\n│profile: facebook.com/tawsif.uwu\n`;
+      msg += `│Miku ♡
+╰────────────◊`; // its not decoy so change it if you want 
 
       await message.reply(msg);
     } else {
@@ -75,25 +74,23 @@ module.exports = {
         const roleText = roleTextToString(configCommand.role);
         const author = configCommand.author || "Unknown";
 
-        const longDescription = configCommand.longDescription ? configCommand.longDescription.en || "No description" : "No description";
+        const shortDescription = configCommand.shortDescription ? configCommand.shortDescription.en || "No description" : "No description";
 
         const guideBody = configCommand.guide?.en || "No guide available.";
         const usage = guideBody.replace(/{p}/g, prefix).replace(/{n}/g, configCommand.name);
 
-        const response = `╭──── NAME───♡
-  │ ${configCommand.name}
-  ├── INFO
-  │ Description: ${longDescription}
-  │ Other names: ${configCommand.aliases ? configCommand.aliases.join(", ") : "Do not have"}
-  │ Other names in your group: Do not have
-  │ Version: ${configCommand.version || "1.0"}
-  │ Role: ${roleText}
-  │ Time per command: ${configCommand.countDown || 1}s
-  │ Author: ${author}
-  ├── Usage
-  │ ${usage}
-  ╰───────────♡`;
-
+        const response = `╭───『 Name 』───♡
+│ ${configCommand.name}
+├───『 info 』───♡
+│ Author: ${author}
+│ Description: ${shortDescription}
+│ Other names: ${configCommand.aliases ? configCommand.aliases.join(", ") : "Do not have"}
+│ Version: ${configCommand.version || "1.0"}
+│ Role: ${roleText}
+│ Time per command: ${configCommand.countDown || 1}s
+├───『 Usage 』───♡
+│ ${usage}
+╰─────────────♡`;
         await message.reply(response);
       }
     }

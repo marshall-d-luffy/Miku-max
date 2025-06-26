@@ -6,11 +6,11 @@ module.exports = {
     name: "imgbb",
     aliases: ["i"],
     version: "1.0",
-    author: "AceGun",
+    author: "Eijah Noah",
     countDown: 5,
     role: 0,
     shortDescription: {
-      en: "Converting an image to a convertible imgbb"
+      en: "Upload image to imgbb"
     },
     longDescription: {
       en: "Upload image to imgbb by replying to photo"
@@ -22,7 +22,7 @@ module.exports = {
   },
 
   onStart: async function ({ api, event }) {
-    const imgbbApiKey = "1b4d99fa0c3195efe42ceb62670f2a25"; // Replace "YOUR_API_KEY_HERE" with your actual API key
+    const imgbbApiKey = "7c8316ed281df342acce428b00451d63"; 
     const linkanh = event.messageReply?.attachments[0]?.url;
     if (!linkanh) {
       return api.sendMessage('Please reply to an image.', event.threadID, event.messageID);

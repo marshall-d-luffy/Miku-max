@@ -15,7 +15,7 @@ module.exports = {
     guide: "{pn}"
   },
 
-  onStart: async function({ api, event, threadsData, usersData }) {
+  onStart: async function({ api, event, message,  threadsData, usersData }) {
 
     const { threadID, messageID, senderID } = event;
     const { participantIDs } = await api.getThreadInfo(threadID);
@@ -49,7 +49,9 @@ module.exports = {
       mentions: arraytag,
       attachment: imglove
     };
-
-    return api.sendMessage(msg, event.threadID, event.messageID);
+const t = await message.send(msg);
+    fs.unlinkSync(__dirname + "/cache/giflove.png");
+    fs.unlinkSync(__dirname + "/cache/avt.png");
+    fs.unlinkSync(__dirname + "/cache/avt2.png");
   }
 };

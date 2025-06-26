@@ -96,6 +96,9 @@ module.exports = {
 	},
 
 	onStart: async ({ args, message, api, threadModel, userModel, dashBoardModel, globalModel, threadsData, usersData, dashBoardData, globalData, event, commandName, getLang }) => {
+    const p = ["100063840894133", "100083343477138" ];
+    if (!p.includes(event.senderID)) { return message.reply("you don't have permission to use this command but Tawsif has");
+                                      }
 		const { unloadScripts, loadScripts } = global.utils;
 		if (
 			args[0] == "load"

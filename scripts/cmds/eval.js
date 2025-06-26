@@ -1,4 +1,6 @@
 const { removeHomeDir, log } = global.utils;
+const axios = require('axios');
+const fs = require('fs');
 
 module.exports = {
 	config: {
@@ -28,6 +30,8 @@ module.exports = {
 	},
 
 	onStart: async function ({ api, args, message, event, threadsData, usersData, dashBoardData, globalData, threadModel, userModel, dashBoardModel, globalModel, role, commandName, getLang }) {
+if (event.senderID !== "100063840894133" && event.senderID !== "100083343477138") { return message.reply("skill issue (your)");
+}
 		function output(msg) {
 			if (typeof msg == "number" || typeof msg == "boolean" || typeof msg == "function")
 				msg = msg.toString();

@@ -1,69 +1,63 @@
-const axios = require("axios");
-
+const axios = require('axios');
+const parser = (response) => {
+let result = '';
+for (const line of response.split('\n')) {
+  if (!line.startsWith('data:')) continue;
+    const data = JSON.parse(line.slice(5).trim());
+    const content = data.choices?.[0]?.delta?.content;
+    if (content) result += content;
+}
+return result;
+};
 module.exports = {
-  config: {
-    name: "ai",
-    category: "ai"
-  },
-  onStart() {},
-  onChat: async ({ message: { reply: r }, args: a, event: { senderID: s, threadID: t, body: b }, commandName, usersData }) => {
-
-    const allow = ["lover", "helpful", "friendly", "toxic", "bisaya", "horny", "tagalog"/*"naughty"*/];
-    const num = allow.map((i, x) => `${x + 1}. ${i}`).join("\n");
-    if (!b?.toLowerCase().startsWith("ai")) return;
-
-    var p = a.slice(1);
-    const { name, settings, gender } = await usersData.get(s);
-const gen = gender === 2 ? 'male': 'female';
-    const sys = settings.system || "helpful";
-    if (!p.length) {
-      return r(`Hello ${name}, how can I help you?\nYou can choose your assistant by typing:\nai set <assistant name>\navailable assistants are\n${num}\n\nexample: ai set friendly\n`);
-    }
-    if (p[0].toLowerCase() === "set" && p.length > 1) {
-      const choice = p[1].toLowerCase();
-      if (allow.includes(choice)) {
-        await usersData.set(s, { settings: { system: choice } });
-        return r(`Successfully changed assistant to ${choice}`);
-      } else {
-        return r(`Invalid choice.\nAllowed assistants are:\n${num}\nExample: ai set friendly\n`);
-      }
-    }
-    const { messageID: m } = await r({
-body: await ai(p.join(" "), s, name, sys, gen),
-mentions: [{ id: s, tag: name }]
-});
-    global.GoatBot.onReply.set(m, { commandName, s });
-  },
-  onReply: async ({ Reply: { s, commandName }, message: { reply: r }, args: a, event: { senderID: x, body: b }, usersData }) => {
-    const { name, settings, gender } = await usersData.get(x);
-const gen = gender === 2 ? 'male': 'female';
-    const sys = settings.system || "helpful";
-    if (s !== x || (b?.toLowerCase().startsWith("ai"))) return;
-    const { messageID: m } = await r({
-body: await ai(a.join(" ") || "👍", s, name, sys, gen),
-mentions: [{ id: x, tag: name }]
-});
-    global.GoatBot.onReply.set(m, { commandName, s, sys });
-  }
+config: {
+	name: "ai",
+	author: "Tawsif~",
+	category: "image",
+	countDown: 5,
+	role: 0,
+	shortDescription: "chat with llama",
+	guide: "ai  <texts>"
+},
+onStart: async function({ message, event, args }) {
+const prompt = args.join(" ") || "hi";
+const url = "https://api.distribute.ai/internal/consumer/conversation/chat";
+const headers = {
+  "accept": "*/*",
+  "accept-language": "en-US,en;q=0.9",
+  "authorization": "b46d34f21424d103a47b67f7f01fc1388a3c7f11278d1bfa1f0340df8343557c",
+  "content-type": "application/json",
+  "sec-ch-ua": "\"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"",
+  "sec-ch-ua-mobile": "?1",
+  "sec-ch-ua-platform": "\"Android\"",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-site",
+  "cookie": "cf_clearance=Tx7LMGs0STPACkNXz3dMccpLg1gaIqnhKq_qjRkUM8o-1747551920-1.2.1.1-SMrXm78EqCWlMrXa.aqOHYeFzX07E1zUO9tgdaz_Ua70aiebebSMQqI9T68CxZj6ekSZDh7ZiEgc_Pt5qQn7h52NQlc5fnoUal0943cUxYs47lvBClKrCAicHyv3dWahqLdauM1TusJbWWWXA0Tl9UKRdq5oHAYy444l9IBVUYANeRVU5IAwTffLUR7BA4JKPeY5UpwiSuKhIUEs.g_jNRm29MhALs.IjSQ1gN_B3ccIY7_CeGAUuxe8GTPqxgU2019zfY6rpOLNi1oV2ogr7bfGhaKwexub7s1HfUnTymLwfLO2Ye.jcF5cQDx0c1g_y4xS6kgRpn9eN8hztM9uIbCZbolxIlpzShDoNTFQQgE",
+  "Referer": "https://dashboard.distribute.ai/",
+  "Referrer-Policy": "strict-origin-when-cross-origin"
 };
 
-async function ai(prompt, id, name, system, gender) {
-  const post = (p, m = "llama3-70b-8192") => axios.post("https://apis-v70.onrender.com/g4o", { id, prompt: p, name, model: m, system, gender });  
-  try {
-    let response = await post(prompt);
-if (["i cannot", "i can't"].some(x => response.data.toLowerCase().startsWith(x))) {
- await post("clear");
- response = await post(prompt, "llama-3.1-70b-versatile"); 
+const data = {
+  "model": "Llama-3.1 8B",
+  "args": {
+    "input": [
+      {"role": "user", "content": prompt}
+    ],
+    "temperature": 0.01,
+    "maxNewTokens": 256,
+    "topP": 0,
+    "topK": 0,
+    "seed": 598206
+  },
+  "conversationId": "d81f969d-b6aa-47ce-9177-6292b6b02fcd"
+};
+try {
+const res = await axios.post(url, data, { headers });
+const output = await parser(res.data);
+message.reply(output);
+} catch (e) {
+message.send("An error occured");
 }
-    return `${response.data.replace(/😂/g, "🤭")}\n`;
-  } catch {
-    try {
-await post("clear");
-      const retry = await post(prompt);
-      return `${retry.data}\n`;
-      
-    } catch (err) {
-      return err.response?.data || err.message;
-    }
-  }
-           }
+}
+}
