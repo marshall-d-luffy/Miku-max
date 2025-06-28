@@ -85,7 +85,7 @@ module.exports = async function (api, threadModel, userModel, dashBoardModel, gl
 						else
 							packageName = packageName.split('/')[0];
 
-						if (!packageAlready.includes(packageName)) {
+						/*if (!packageAlready.includes(packageName)) {
 							packageAlready.push(packageName);
 							if (!existsSync(`${process.cwd()}/node_modules/${packageName}`)) {
 								const wating = setInterval(() => {
@@ -106,7 +106,7 @@ module.exports = async function (api, threadModel, userModel, dashBoardModel, gl
 									throw new Error(`Can't install package ${packageName}`);
 								}
 							}
-						}
+						} */
 					}
 				}
 
